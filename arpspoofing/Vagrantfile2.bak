@@ -9,17 +9,15 @@ Vagrant.configure("2") do |config|
   # The most common configuration options are documented and commented below.
   # For a complete reference, please see the online documentation at
   # https://docs.vagrantup.com.
-
+    # First CentOS instance
   # Every Vagrant development environment requires a box. You can search for
   # boxes at https://vagrantcloud.com/search.
-  config.vm.box = "bento/rockylinux-9"
-  config.vm.box_version = "202407.23.0"
-  config.vm.network :forwarded_port, guest: 22, host: 9001
   # Disable automatic box update checking. If you disable this, then
   # boxes will only be checked for updates when the user runs
   # `vagrant box outdated`. This is not recommended.
   # config.vm.box_check_update = false
 
+    # First CentOS instance
   # Create a forwarded port mapping which allows access to a specific port
   # within the machine from a port on the host machine. In the example below,
   # accessing "localhost:8080" will access port 80 on the guest machine.
@@ -46,11 +44,84 @@ Vagrant.configure("2") do |config|
   # argument is a set of non-required options.
   # config.vm.synced_folder "../data", "/vagrant_data"
 
-  # Disable the default share of the current code directory. Doing this
-  # provides improved isolation between the vagrant box and your host
   # by making sure your Vagrantfile isn't accessible to the vagrant box.
   # If you use this you may want to enable additional shared subfolders as
-  # shown above.
+  # ssowentOS instance
+  config.vm.define "centos7-1" do |centos1|
+    centos1.vm.box = "centos/7"
+
+    # Network settings for centos7-1
+    centos1.vm.network "public_network", 
+      ip: "172.30.1.98", 
+      mac: "080027123456",
+      bridge: "eno1"
+
+    # Disable private network to avoid the IP requirement error
+    centos1.vm.network "private_network", ip: "192.168.56.10"
+
+    # Hostname
+    centos1.vm.hostname = "centos7-1.local"
+
+    #provisioning to install monitoring tools
+#    centos1.vm.provision "shell", inline: <<-SHELL
+#				sudo yum install -y tcpdump iftop iptraf-ng
+#				sudo systemctl enable rsyslog && sudo systemctl start rsyslog
+#				echo "Network monitoring tools installed and running on centos7-1'
+#			SHELL
+#    # VM resources
+    centos1.vm.provider "virtualbox" do |vb|
+      vb.memory = "1024"
+      vb.cpus = 1
+    end
+  end
+
+  # Second CentOS instance
+  config.vm.define "centos7-2" do |centos2|
+    centos2.vm.box = "centos/7"
+
+    # Network settings for centos7-2
+    centos2.vm.network "public_network", 
+      ip: "172.30.1.99", 
+      mac: "080027654321",
+      bridge: "eno1"
+
+
+    # Disable private network
+    centos2.vm.network "private_network", ip: "192.168.56.11"
+
+    # Hostname
+    centos2.vm.hostname = "centos7-2.local"
+
+    # VM resources
+    centos2.vm.provider "virtualbox" do |vb|
+      vb.memory = "1024"
+      vb.cpus = 1
+    end
+  end
+
+  # Kali Linux instance with GUI
+  config.vm.define "kali" do |kali|
+    kali.vm.box = "kalilinux/rolling"
+
+    # Network settings for Kali
+    kali.vm.network "public_network", 
+      ip: "172.30.1.100",
+      bridge: "eno1"
+    # Disable private network
+    kali.vm.network "private_network", ip: "192.168.56.12"
+
+    # Hostname
+    kali.vm.hostname = "kali.local"
+
+    # VM resources
+    kali.vm.provider "virtualbox" do |vb|
+      vb.memory = "2048"
+      vb.cpus = 2
+      vb.gui = true   # Enable GUI mode
+    end
+  end
+
+
   # config.vm.synced_folder ".", "/vagrant", disabled: true
 
   # Provider-specific configuration so you can fine-tune various
