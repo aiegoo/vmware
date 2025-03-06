@@ -10,29 +10,10 @@ Vagrant.configure("2") do |config|
   # For a complete reference, please see the online documentation at
   # https://docs.vagrantup.com.
 
-  config.vm.define "windows10" do |win|
   # Every Vagrant development environment requires a box. You can search for
   # boxes at https://vagrantcloud.com/search.
   config.vm.box = "gusztavvargadr/windows-10"
   config.vm.box_version = "2202.0.2409"
-
-    # Network settings
-    win.vm.network "public_network", 
-    ip: "172.30.1.110",
-    bridge: "eno1"
-
-  # Hostname
-    win.vm.hostname = "windows10.local"
-
-    # VM resources
-    win.vm.provider "virtualbox" do |vb|
-    vb.memory = "4096"
-    vb.cpus = 2
-    vb.gui = true   # Enable GUI mode
-    end
-  end
-
-# Once this is saved, run `vagrant up` to spin up the Windows 10 VM! 🚀
 
   # Disable automatic box update checking. If you disable this, then
   # boxes will only be checked for updates when the user runs
